@@ -99,14 +99,14 @@ class GPArtworkTask(HasActivity, HasReactions, HasTags, HasMentions, Document):
 		# Define allowed transitions for Procurement Cycle
 		procurement_cycle_transitions = {
 			"Procurement Role": {
-				"Bucket": ["Procurement Review"],  # Procurement can pick up from bucket
-				"Draft": ["Procurement Review"],
-				"Procurement Review": ["Quality Review"],
-				"Rework": ["Procurement Review"]  # After rework, back to procurement review
+				"Bucket": ["Procurement Draft", "Procurement Review"],  # Procurement can pick up from bucket
+				"Procurement Draft": ["Procurement Review"],
+				"Procurement Review": ["Final Approved", "Procurement Rework"],  # Procurement can approve or send for rework
+				"Procurement Rework": ["Procurement Review", "Final Approved"]  # After rework, back to procurement review or approve
 			},
 			"Quality Role": {
-				"Quality Review": ["Final Approved", "Rework"],  # Quality can approve or send for rework
-				"Rework": ["Final Approved", "Rework"]  # Quality can approve or continue rework
+				"Procurement Review": ["Final Approved", "Procurement Rework"],  # Quality can approve or send for rework
+				"Procurement Rework": ["Final Approved", "Procurement Rework"]  # Quality can approve or continue rework
 			}
 		}
 
@@ -588,14 +588,14 @@ class GPArtworkTask(HasActivity, HasReactions, HasTags, HasMentions, Document):
 		# Define allowed transitions for Procurement Cycle
 		procurement_cycle_transitions = {
 			"Procurement Role": {
-				"Bucket": ["Procurement Review"],  # Procurement can pick up from bucket
-				"Draft": ["Procurement Review"],
-				"Procurement Review": ["Quality Review"],
-				"Rework": ["Procurement Review"]  # After rework, back to procurement review
+				"Bucket": ["Procurement Draft", "Procurement Review"],  # Procurement can pick up from bucket
+				"Procurement Draft": ["Procurement Review"],
+				"Procurement Review": ["Final Approved", "Procurement Rework"],  # Procurement can approve or send for rework
+				"Procurement Rework": ["Procurement Review", "Final Approved"]  # After rework, back to procurement review or approve
 			},
 			"Quality Role": {
-				"Quality Review": ["Final Approved", "Rework"],  # Quality can approve or send for rework
-				"Rework": ["Final Approved", "Rework"]  # Quality can approve or continue rework
+				"Procurement Review": ["Final Approved", "Procurement Rework"],  # Quality can approve or send for rework
+				"Procurement Rework": ["Final Approved", "Procurement Rework"]  # Quality can approve or continue rework
 			}
 		}
 
@@ -621,10 +621,10 @@ class GPArtworkTask(HasActivity, HasReactions, HasTags, HasMentions, Document):
 			else:
 				# Define allowed transitions for Procurement Cycle admins
 				procurement_admin_transitions = {
-					"Bucket": ["Draft", "Procurement Review"],
-					"Draft": ["Procurement Review"],
-					"Procurement Review": ["Final Approved", "Rework"],
-					"Rework": ["Procurement Review", "Final Approved"],
+					"Bucket": ["Procurement Draft", "Procurement Review"],
+					"Procurement Draft": ["Procurement Review"],
+					"Procurement Review": ["Final Approved", "Procurement Rework"],
+					"Procurement Rework": ["Procurement Review", "Final Approved"],
 					"Final Approved": []  # Final status, no further transitions
 				}
 				allowed_statuses = procurement_admin_transitions.get(current_status, [])
