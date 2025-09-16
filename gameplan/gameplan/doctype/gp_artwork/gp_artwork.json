@@ -1,0 +1,255 @@
+{
+ "actions": [],
+ "allow_copy": 0,
+ "allow_events_in_timeline": 0,
+ "allow_guest_to_view": 0,
+ "allow_import": 0,
+ "allow_rename": 1,
+ "autoname": "format:ART-{####}",
+ "beta": 0,
+ "creation": "2025-01-11 17:25:00.000000",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "customer",
+  "description",
+  "column_break_4",
+  "status",
+  "priority",
+  "project_type",
+  "section_break_8",
+  "start_date",
+  "due_date",
+  "column_break_11",
+  "estimated_hours",
+  "budget",
+  "section_break_15",
+  "created_by_sales",
+  "creation_date",
+  "column_break_18",
+  "last_updated_by",
+  "last_updated",
+  "tags_section",
+  "tags"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Artwork Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "GP Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Long Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nIn Progress\nUnder Review\nCompleted\nOn Hold\nCancelled",
+   "reqd": 1
+  },
+  {
+   "default": "Medium",
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nUrgent"
+  },
+  {
+   "fieldname": "project_type",
+   "fieldtype": "Select",
+   "label": "Project Type",
+   "options": "Logo Design\nBranding\nPackaging\nWeb Design\nPrint Media\nSocial Media\nOther"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Timeline & Budget"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "estimated_hours",
+   "fieldtype": "Float",
+   "label": "Estimated Hours",
+   "precision": "2"
+  },
+  {
+   "fieldname": "budget",
+   "fieldtype": "Currency",
+   "label": "Budget"
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break",
+   "label": "Tracking Information"
+  },
+  {
+   "fieldname": "created_by_sales",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "creation_date",
+   "fieldtype": "Datetime",
+   "label": "Creation Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_updated_by",
+   "fieldtype": "Link",
+   "label": "Last Updated By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Datetime",
+   "label": "Last Updated",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "tags_section",
+   "fieldtype": "Section Break",
+   "label": "Tags"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Table MultiSelect",
+   "label": "Tags",
+   "options": "GP Artwork Tag"
+  }
+ ],
+ "has_web_view": 0,
+ "hide_toolbar": 0,
+ "idx": 0,
+ "in_create": 0,
+ "is_submittable": 0,
+ "is_tree": 0,
+ "issingle": 0,
+ "istable": 0,
+ "max_attachments": 10,
+ "modified": "2025-01-11 17:25:00.000000",
+ "modified_by": "Administrator",
+ "module": "Gameplan",
+ "name": "GP Artwork",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Artwork Sales Team",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Artwork Quality Team",
+   "share": 1,
+   "write": 0
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Artwork Procurement Team",
+   "share": 1,
+   "write": 0
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Gameplan Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "restrict_to_domain": "",
+ "search_fields": "title,customer,status,priority",
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

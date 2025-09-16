@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "creation": "2025-01-11 16:30:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "file_name",
+  "file_url",
+  "file_size",
+  "version",
+  "uploaded_by",
+  "upload_date",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "file_name",
+   "fieldtype": "Data",
+   "label": "File Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "file_url",
+   "fieldtype": "Attach",
+   "label": "File URL",
+   "reqd": 1
+  },
+  {
+   "fieldname": "file_size",
+   "fieldtype": "Data",
+   "label": "File Size",
+   "read_only": 1
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Data",
+   "label": "Version",
+   "default": "1.0"
+  },
+  {
+   "fieldname": "uploaded_by",
+   "fieldtype": "Link",
+   "label": "Uploaded By",
+   "options": "User",
+   "read_only": 1,
+   "default": "user"
+  },
+  {
+   "fieldname": "upload_date",
+   "fieldtype": "Datetime",
+   "label": "Upload Date",
+   "read_only": 1,
+   "default": "now"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-11 16:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "Gameplan",
+ "name": "GP Artwork Attachment",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,66 @@
+{
+ "actions": [],
+ "creation": "2025-01-11 16:30:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "from_status",
+  "to_status",
+  "changed_by",
+  "change_date",
+  "reason",
+  "comments"
+ ],
+ "fields": [
+  {
+   "fieldname": "from_status",
+   "fieldtype": "Data",
+   "label": "From Status",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "to_status",
+   "fieldtype": "Data",
+   "label": "To Status",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "changed_by",
+   "fieldtype": "Link",
+   "label": "Changed By",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "change_date",
+   "fieldtype": "Datetime",
+   "label": "Change Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Data",
+   "label": "Reason"
+  },
+  {
+   "fieldname": "comments",
+   "fieldtype": "Small Text",
+   "label": "Comments"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-11 16:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "Gameplan",
+ "name": "GP Artwork Status History",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

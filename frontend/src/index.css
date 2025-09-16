@@ -1,0 +1,165 @@
+@import 'frappe-ui/src/fonts/Inter/inter.css';
+@import './styles/icons.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* disable webkit tap highlight color */
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Global scrollbar styling for all Kanban and scrollable components */
+.kanban-scroll,
+.artwork-tasks-scroll,
+.approved-tasks-scroll,
+.custom-scrollbar {
+  /* Force scrollbar to always be visible */
+  overflow-y: scroll !important;
+  /* Ensure minimum height for scrollbar visibility */
+  min-height: 200px;
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 #f1f5f9;
+}
+
+.kanban-scroll::-webkit-scrollbar,
+.artwork-tasks-scroll::-webkit-scrollbar,
+.approved-tasks-scroll::-webkit-scrollbar {
+  width: 14px;
+}
+
+.kanban-scroll::-webkit-scrollbar-track,
+.artwork-tasks-scroll::-webkit-scrollbar-track,
+.approved-tasks-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+  margin: 4px 0;
+  border: 2px solid #e2e8f0;
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb,
+.artwork-tasks-scroll::-webkit-scrollbar-thumb,
+.approved-tasks-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+  border-radius: 8px;
+  border: 2px solid #f1f5f9;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+  min-height: 50px;
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb:hover,
+.artwork-tasks-scroll::-webkit-scrollbar-thumb:hover,
+.approved-tasks-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #2563eb, #1e40af);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  transform: scale(1.02);
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb:active,
+.artwork-tasks-scroll::-webkit-scrollbar-thumb:active,
+.approved-tasks-scroll::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #1d4ed8, #1e3a8a);
+  transform: scale(0.98);
+}
+
+/* Firefox scrollbar styling */
+.kanban-scroll,
+.artwork-tasks-scroll,
+.approved-tasks-scroll,
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 #f1f5f9;
+}
+
+/* Ensure smooth scrolling */
+.kanban-scroll,
+.artwork-tasks-scroll,
+.approved-tasks-scroll,
+.custom-scrollbar {
+  scroll-behavior: smooth;
+}
+
+/* Force scrollbar to always be visible even when content is short */
+.kanban-scroll::-webkit-scrollbar-thumb,
+.artwork-tasks-scroll::-webkit-scrollbar-thumb,
+.approved-tasks-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #1d4ed8) !important;
+  opacity: 0.8;
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb:hover,
+.artwork-tasks-scroll::-webkit-scrollbar-thumb:hover,
+.approved-tasks-scroll::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
+
+/* AGGRESSIVE scrollbar styling for ArtworkKanban page - OVERRIDE ALL OTHER STYLES */
+.kanban-board {
+  overflow-y: scroll !important;
+  overflow-x: auto !important;
+  min-height: 400px !important;
+}
+
+.kanban-board::-webkit-scrollbar {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+.kanban-board::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+  border-radius: 8px !important;
+  margin: 4px 0 !important;
+  border: 2px solid #e2e8f0 !important;
+  display: block !important;
+}
+
+.kanban-board::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #1d4ed8) !important;
+  border-radius: 8px !important;
+  border: 2px solid #f1f5f9 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3) !important;
+  min-height: 50px !important;
+  opacity: 0.9 !important;
+  display: block !important;
+}
+
+.kanban-board::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #2563eb, #1e40af) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+  transform: scale(1.02) !important;
+  opacity: 1 !important;
+}
+
+.kanban-board::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #1d4ed8, #1e3a8a) !important;
+  transform: scale(0.98) !important;
+}
+
+/* Special styling for main Kanban board horizontal scroll */
+.kanban-board::-webkit-scrollbar {
+  height: 12px;
+}
+
+.kanban-board::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+.kanban-board::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+  border: 2px solid #f1f5f9;
+}
+
+.kanban-board::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.kanban-board::-webkit-scrollbar-thumb:active {
+  background: #64748b;
+}
