@@ -1164,8 +1164,9 @@ def get_bucket_tasks(customer_filter=None, sort_by="cycle_count", sort_order="de
 		frappe.throw("You don't have permission to view bucket tasks")
 	
 	# Build filters - Bucket tasks are in the Procurement Bucket
+	# Include both "Bucket" and "Final Approved" tasks as they are ready for procurement processing
 	filters = {
-		"status": "Bucket"
+		"status": ["in", ["Bucket", "Final Approved"]]
 	}
 	
 	# Add customer filter if provided
@@ -1571,12 +1572,13 @@ def get_bucket_stats():
 		frappe.throw("You don't have permission to view bucket stats")
 	
 	# Get total Bucket tasks from both doctypes
+	# Include both "Bucket" and "Final Approved" tasks as they are ready for procurement processing
 	total_sales_tasks = frappe.db.count("GP Sales Task", {
-		"status": "Bucket"
+		"status": ["in", ["Bucket", "Final Approved"]]
 	})
 	
 	total_procurement_tasks = frappe.db.count("GP Procurement Task", {
-		"status": "Bucket"
+		"status": ["in", ["Bucket", "Final Approved"]]
 	})
 	
 	total_bucket_tasks = total_sales_tasks + total_procurement_tasks
@@ -1585,9 +1587,9 @@ def get_bucket_stats():
 	customer_stats = frappe.db.sql("""
 		SELECT t.customer, p.title as customer_title, COUNT(*) as count
 		FROM (
-			SELECT customer FROM `tabGP Sales Task` WHERE status = 'Bucket'
+			SELECT customer FROM `tabGP Sales Task` WHERE status IN ('Bucket', 'Final Approved')
 			UNION ALL
-			SELECT customer FROM `tabGP Procurement Task` WHERE status = 'Bucket'
+			SELECT customer FROM `tabGP Procurement Task` WHERE status IN ('Bucket', 'Final Approved')
 		) t
 		LEFT JOIN `tabGP Project` p ON t.customer = p.name
 		GROUP BY t.customer, p.title
