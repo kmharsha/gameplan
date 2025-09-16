@@ -730,5 +730,5 @@ def has_permission(doc, user=None, permission_type=None):
 
 def on_doctype_update():
 	"""Add database indexes"""
-	frappe.db.add_index("GP Artwork Task", ["project", "status"])
+	frappe.db.add_index("GP Artwork Task", ["customer", "status"])
 	frappe.db.add_index("GP Artwork Task", ["status", "modified"])

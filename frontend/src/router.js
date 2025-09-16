@@ -76,7 +76,7 @@ let router = createRouter({
   {
     name: 'SalesBucket',
     path: '/sales-bucket',
-    component: () => import('@/pages/SalesBucket.vue'),buttons. 
+    component: () => import('@/pages/SalesBucket.vue'),
   },
     {
       name: 'ArtworkTask',
