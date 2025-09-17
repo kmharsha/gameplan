@@ -135,7 +135,7 @@
           type="submit"
           :loading="creating"
           :disabled="!isFormValid"
-          class="px-8 py-2.5 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-medium transition-colors shadow-sm"
+          class="px-8 py-2.5 !bg-blue-600 !text-white hover:!bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-medium transition-colors shadow-sm"
         >
           Create Task
         </Button>

@@ -77,7 +77,7 @@
         @click="createArtwork"
         :loading="loading"
         :disabled="!isValid"
-        class="px-6 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-md font-medium"
+        class="px-6 py-2 !bg-blue-600 !text-white hover:!bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-md font-medium"
       >
         Create Artwork
       </Button>
