@@ -6,7 +6,7 @@
         <h1 class="text-2xl font-semibold text-ink-gray-9">Artwork Management</h1>
         <p class="text-sm text-ink-gray-6 mt-1">Manage artworks for your customers</p>
       </div>
-      <Button @click="openCreateDialog" class="bg-blue-600 text-white hover:bg-blue-700 inline-flex items-center">
+      <Button @click="openCreateDialog" class="!bg-blue-600 !text-white hover:!bg-blue-700 inline-flex items-center">
         <PlusIcon size="md" variant="white" class="mr-2" />
         Create Artwork
       </Button>
@@ -120,7 +120,7 @@
         <p class="text-ink-gray-6 text-center max-w-md mb-6">
           Create your first artwork project to get started with managing tasks and workflows.
         </p>
-        <Button @click="showCreateArtworkDialog = true" class="bg-blue-600 text-white hover:bg-blue-700 inline-flex items-center">
+        <Button @click="showCreateArtworkDialog = true" class="!bg-blue-600 !text-white hover:!bg-blue-700 inline-flex items-center">
           <PlusIcon size="md" variant="white" class="mr-2" />
           Create First Artwork
         </Button>

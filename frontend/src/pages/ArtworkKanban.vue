@@ -30,7 +30,7 @@
           <Button 
             @click="forceRefresh" 
             :loading="loading"
-            class="bg-blue-600 text-white hover:bg-blue-700 inline-flex items-center"
+            class="!bg-blue-600 !text-white hover:!bg-blue-700 inline-flex items-center"
           >
             <template #prefix>
               <LucideRefreshCw class="size-4 stroke-current" />
