@@ -9,13 +9,27 @@ let notificationCallbacks = []
 export function initSocket() {
   let host = window.location.hostname
   let siteName = window.site_name
-  let port = window.location.port ? `:${socketio_port}` : ''
-  let protocol = port ? 'http' : 'https'
+  
+  // For production, use the same port as the web server (HTTPS)
+  // For development, use the socketio port
+  let port = ''
+  let protocol = window.location.protocol === 'https:' ? 'https' : 'http'
+  
+  // Only add socketio port for development
+  if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
+    port = `:${socketio_port}`
+  }
+  
   let url = `${protocol}://${host}${port}/${siteName}`
+
+  console.log('Socket.IO connecting to:', url)
 
   socket = io(url, {
     withCredentials: true,
     reconnectionAttempts: 5,
+    transports: ['polling', 'websocket'],
+    timeout: 20000,
+    forceNew: true
   })
   
   // Handle resource refetch
