@@ -499,7 +499,8 @@ def test_artwork_api():
 def get_customers():
 	"""Get list of customers (GP Projects that represent customers)"""
 	user_roles = frappe.get_roles(frappe.session.user)
-	frappe.log_error(f"get_customers called by user: {frappe.session.user}, roles: {user_roles}", "Artwork API Debug")
+	# Log only essential info to avoid character limit exceeded error
+	frappe.log_error(f"get_customers called by user: {frappe.session.user}", "Artwork API Debug")
 	
 	artwork_roles = ["Sales Role", "Procurement Role", "Quality Role"]
 	has_artwork_role = any(role in user_roles for role in artwork_roles)
@@ -541,7 +542,8 @@ def get_customer_artworks(customer):
 	# Ensure customer is a string (handle both string and int inputs)
 	customer = str(customer)
 	user_roles = frappe.get_roles(frappe.session.user)
-	frappe.log_error(f"get_customer_artworks called for customer: {customer}, by user: {frappe.session.user}, roles: {user_roles}", "Artwork API Debug")
+	# Log only essential info to avoid character limit exceeded error
+	frappe.log_error(f"get_customer_artworks called for customer: {customer}, by user: {frappe.session.user}", "Artwork API Debug")
 	
 	artwork_roles = ["Sales Role", "Procurement Role", "Quality Role"]
 	has_artwork_role = any(role in user_roles for role in artwork_roles)
@@ -585,7 +587,8 @@ def create_artwork(customer, title, description="", priority="Medium",
 	budget = float(budget) if budget else 0
 	
 	user_roles = frappe.get_roles(frappe.session.user)
-	frappe.log_error(f"create_artwork called with customer: {customer}, title: {title}, by user: {frappe.session.user}, roles: {user_roles}", "Artwork API Debug")
+	# Log only essential info to avoid character limit exceeded error
+	frappe.log_error(f"create_artwork called with customer: {customer}, title: {title}, by user: {frappe.session.user}", "Artwork API Debug")
 	
 	# Allow Sales Role to create artworks
 	if "Sales Role" not in user_roles and "System Manager" not in user_roles and "Gameplan Admin" not in user_roles and "Gameplan Member" not in user_roles:
