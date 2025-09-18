@@ -512,6 +512,7 @@ import {
 } from '@/data/artworkTasks'
 import { spaces } from '@/data/spaces'
 import { apiCall } from '@/utils/api'
+import { sendTaskMovedToSalesBucketNotification } from '@/utils/taskNotifications'
 import KanbanColumn from '@/components/KanbanColumn.vue'
 import CreateArtworkTaskDialog from '@/components/CreateArtworkTaskDialog.vue'
 import StatusChangeDialog from '@/components/StatusChangeDialog.vue'
@@ -791,6 +792,15 @@ const handleStatusChangeConfirmed = async (reason, comments) => {
           task_name: selectedTask.value.name
         })
         console.log('[ArtworkKanban] Task moved to sales bucket successfully')
+        
+        // Send notification for sales bucket movement
+        await sendTaskMovedToSalesBucketNotification({
+          taskId: selectedTask.value.name,
+          taskTitle: selectedTask.value.title,
+          movedBy: window.$session?.user?.name || 'Unknown User',
+          project: selectedTask.value.project,
+          customer: selectedTask.value.customer
+        })
         
         // Trigger sales bucket animation
         triggerSalesBucketAnimation()
