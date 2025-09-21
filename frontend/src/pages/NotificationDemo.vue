@@ -118,14 +118,29 @@ const loadNotifications = async () => {
     console.log('Response type:', typeof response)
     console.log('Response message:', response?.message)
     console.log('Response is array:', Array.isArray(response))
+    console.log('Response length:', response?.length)
+    console.log('Response constructor:', response?.constructor?.name)
     
     // Handle both response.message and direct response
     let notificationData = null
     if (response && response.message) {
+      console.log('Using response.message')
       notificationData = response.message
     } else if (Array.isArray(response)) {
+      console.log('Using direct response array')
       notificationData = response
+    } else {
+      console.log('Response is neither message nor array, checking if it has length property')
+      if (response && response.length !== undefined) {
+        console.log('Response has length property, treating as array')
+        notificationData = response
+      }
     }
+    
+    console.log('Final notificationData:', notificationData)
+    console.log('notificationData type:', typeof notificationData)
+    console.log('notificationData is array:', Array.isArray(notificationData))
+    console.log('notificationData length:', notificationData?.length)
     
     if (notificationData && notificationData.length > 0) {
       notifications.value = notificationData
@@ -165,6 +180,16 @@ const sendTestNotification = async () => {
     
     console.log('Test notification API response:', response)
     console.log('Test notification sent successfully')
+    
+    // Test browser notification immediately
+    if (Notification.permission === 'granted') {
+      new Notification('Test Browser Notification', {
+        body: 'This is a test browser notification from Gameplan!',
+        icon: '/favicon.png'
+      })
+    } else {
+      console.log('Browser notification permission not granted')
+    }
     
     // Wait a moment for the notification to be created
     setTimeout(async () => {
@@ -206,6 +231,14 @@ const requestPermission = async () => {
   if ('Notification' in window) {
     const permission = await Notification.requestPermission()
     permissionStatus.value = permission === 'granted' ? 'Granted' : 'Denied'
+    
+    // Test browser notification if permission granted
+    if (permission === 'granted') {
+      new Notification('Test Browser Notification', {
+        body: 'This is a test browser notification!',
+        icon: '/favicon.png'
+      })
+    }
   } else {
     permissionStatus.value = 'Not Supported'
   }
