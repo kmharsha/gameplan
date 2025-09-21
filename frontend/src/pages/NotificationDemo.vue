@@ -34,10 +34,10 @@
     <div class="section">
       <h2>Notification Status</h2>
       <div class="status-info">
-        <p><strong>Browser Support:</strong> {{ 'Notification' in window ? '✅ Supported' : '❌ Not Supported' }}</p>
-        <p><strong>Permission Status:</strong> {{ Notification.permission || 'Unknown' }}</p>
-        <p><strong>HTTPS Required:</strong> {{ window.location.protocol === 'https:' ? '✅ Secure' : '❌ Not Secure (HTTPS required for notifications)' }}</p>
-        <p><strong>Current URL:</strong> {{ window.location.href }}</p>
+        <p><strong>Browser Support:</strong> {{ isNotificationSupported ? '✅ Supported' : '❌ Not Supported' }}</p>
+        <p><strong>Permission Status:</strong> {{ notificationPermission }}</p>
+        <p><strong>HTTPS Required:</strong> {{ isSecure ? '✅ Secure' : '❌ Not Secure (HTTPS required for notifications)' }}</p>
+        <p><strong>Current URL:</strong> {{ currentUrl }}</p>
       </div>
     </div>
 
@@ -110,6 +110,12 @@ import { frappeRequest } from 'frappe-ui'
 const notifications = ref([])
 const loading = ref(false)
 const permissionStatus = ref('Checking...')
+
+// Status variables for template
+const isNotificationSupported = ref(false)
+const notificationPermission = ref('Unknown')
+const isSecure = ref(false)
+const currentUrl = ref('')
 
 // Computed properties
 const unreadCount = computed(() => {
@@ -205,7 +211,6 @@ const sendTestNotification = async () => {
       try {
         const notification = new Notification('Test Browser Notification', {
           body: 'This is a test browser notification from Gameplan!',
-          icon: '/favicon.png',
           tag: 'test-notification-' + Date.now(),
           requireInteraction: false
         })
@@ -286,7 +291,6 @@ const requestPermission = async () => {
         try {
           const notification = new Notification('Test Browser Notification', {
             body: 'This is a test browser notification!',
-            icon: '/favicon.png',
             tag: 'test-notification',
             requireInteraction: false
           })
@@ -340,7 +344,6 @@ const testBrowserNotification = () => {
     try {
       const notification = new Notification('Direct Test Notification', {
         body: 'This is a direct test of browser notifications!',
-        icon: '/favicon.png',
         tag: 'direct-test-' + Date.now(),
         requireInteraction: false
       })
@@ -383,7 +386,6 @@ const forceTestNotification = () => {
     // Try to create notification regardless of permission status
     const notification = new Notification('Force Test Notification', {
       body: 'This is a force test notification that should work!',
-      icon: '/favicon.png',
       tag: 'force-test-' + Date.now(),
       requireInteraction: false
     })
@@ -421,6 +423,12 @@ const formatTime = (timestamp) => {
 onMounted(() => {
   loadNotifications()
   
+  // Set status variables
+  isNotificationSupported.value = 'Notification' in window
+  notificationPermission.value = window.Notification?.permission || 'Unknown'
+  isSecure.value = window.location.protocol === 'https:'
+  currentUrl.value = window.location.href
+  
   // Check notification permission
   if ('Notification' in window) {
     permissionStatus.value = Notification.permission === 'granted' ? 'Granted' : 'Not Granted'
@@ -436,7 +444,6 @@ onMounted(() => {
       try {
         const notification = new Notification('Auto-Test Notification', {
           body: 'This is an automatic test notification when the page loads!',
-          icon: '/favicon.png',
           tag: 'auto-test',
           requireInteraction: false
         })
