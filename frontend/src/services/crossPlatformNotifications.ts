@@ -218,8 +218,45 @@ class CrossPlatformNotificationService {
       // Send device info to backend
       console.log('Registering device:', deviceInfo)
       
-      // This would typically call your backend API
-      // to register the device for push notifications
+      // Call backend API to register device
+      const response = await fetch('/api/method/gameplan.gameplan.api.cross_device_notifications.register_device', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': window.csrf_token || ''
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          device_id: this.deviceId,
+          device_type: deviceInfo.type,
+          user_agent: deviceInfo.userAgent,
+          session_id: window.session_id || null,
+          ip_address: null, // Will be set by backend
+          browser_info: {
+            platform: navigator.platform,
+            language: navigator.language,
+            cookieEnabled: navigator.cookieEnabled,
+            onLine: navigator.onLine,
+            screen: {
+              width: screen.width,
+              height: screen.height
+            },
+            viewport: {
+              width: window.innerWidth,
+              height: window.innerHeight
+            }
+          }
+        })
+      })
+      
+      const result = await response.json()
+      console.log('Device registration result:', result)
+      
+      if (result.message && result.message.success) {
+        console.log(`Device ${result.message.action}: ${this.deviceId}`)
+      } else {
+        console.warn('Device registration failed:', result.message)
+      }
       
     } catch (error) {
       console.error('Device registration failed:', error)
