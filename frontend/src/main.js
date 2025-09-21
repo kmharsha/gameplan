@@ -73,7 +73,17 @@ onNotification((notification) => {
 // Initialize notification service
 notificationService.initialize()
 
-// Connect notification service to socket
+// Register service worker for PWA support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then((registration) => {
+      console.log('Service Worker registered:', registration)
+    })
+    .catch((error) => {
+      console.log('Service Worker registration failed:', error)
+    })
+}
+
     app.config.globalProperties.$socket = socket
     app.mount('#app')
   })
@@ -89,7 +99,17 @@ onNotification((notification) => {
 // Initialize notification service
 notificationService.initialize()
 
-// Connect notification service to socket
+// Register service worker for PWA support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then((registration) => {
+      console.log('Service Worker registered:', registration)
+    })
+    .catch((error) => {
+      console.log('Service Worker registration failed:', error)
+    })
+}
+
   app.config.globalProperties.$socket = socket
   app.mount('#app')
 }

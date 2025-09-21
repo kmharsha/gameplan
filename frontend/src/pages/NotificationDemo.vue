@@ -34,9 +34,13 @@
     <div class="section">
       <h2>Notification Status</h2>
       <div class="status-info">
-        <p><strong>Browser Support:</strong> {{ isNotificationSupported ? '✅ Supported' : '❌ Not Supported' }}</p>
-        <p><strong>Permission Status:</strong> {{ notificationPermission }}</p>
+        <p><strong>Browser Support:</strong> {{ capabilities.supported ? '✅ Supported' : '❌ Not Supported' }}</p>
+        <p><strong>Permission Status:</strong> {{ capabilities.permission }}</p>
+        <p><strong>Device Type:</strong> {{ capabilities.isMobile ? '📱 Mobile' : '💻 Desktop' }}</p>
+        <p><strong>PWA Mode:</strong> {{ capabilities.isPWA ? '✅ PWA Installed' : '❌ Browser Mode' }}</p>
+        <p><strong>Service Worker:</strong> {{ capabilities.serviceWorker ? '✅ Active' : '❌ Not Available' }}</p>
         <p><strong>HTTPS Required:</strong> {{ isSecure ? '✅ Secure' : '❌ Not Secure (HTTPS required for notifications)' }}</p>
+        <p><strong>Device ID:</strong> {{ capabilities.deviceId }}</p>
         <p><strong>Current URL:</strong> {{ currentUrl }}</p>
       </div>
     </div>
@@ -51,12 +55,15 @@
         <button @click="requestPermission" class="btn btn-secondary">
           Request Permission
         </button>
-        <button @click="testBrowserNotification" class="btn btn-success">
-          Test Browser Popup
-        </button>
-        <button @click="forceTestNotification" class="btn btn-warning">
-          Force Test (No Permission Check)
-        </button>
+            <button @click="testBrowserNotification" class="btn btn-success">
+              Test Browser Popup
+            </button>
+            <button @click="testCrossPlatformNotification" class="btn btn-info">
+              Test Cross-Platform
+            </button>
+            <button @click="forceTestNotification" class="btn btn-warning">
+              Force Test (No Permission Check)
+            </button>
         <button @click="refreshNotifications" class="btn btn-secondary">
           Refresh
         </button>
@@ -105,6 +112,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { frappeRequest } from 'frappe-ui'
+import { crossPlatformNotifications } from '../services/crossPlatformNotifications'
 
 // Reactive data
 const notifications = ref([])
@@ -116,6 +124,14 @@ const isNotificationSupported = ref(false)
 const notificationPermission = ref('Unknown')
 const isSecure = ref(false)
 const currentUrl = ref('')
+const capabilities = ref({
+  supported: false,
+  permission: 'default',
+  isMobile: false,
+  isPWA: false,
+  serviceWorker: false,
+  deviceId: ''
+})
 
 // Computed properties
 const unreadCount = computed(() => {
@@ -374,6 +390,19 @@ const testBrowserNotification = () => {
   }
 }
 
+const testCrossPlatformNotification = async () => {
+  console.log('Testing cross-platform notification...')
+  
+  try {
+    await crossPlatformNotifications.testNotification()
+    console.log('Cross-platform notification sent successfully')
+    alert('Cross-platform notification sent! This works on desktop, mobile, and PWA!')
+  } catch (error) {
+    console.error('Cross-platform notification failed:', error)
+    alert('Cross-platform notification failed: ' + error.message)
+  }
+}
+
 const forceTestNotification = () => {
   console.log('Force testing browser notification (ignoring permission)...')
   
@@ -428,6 +457,9 @@ onMounted(() => {
   notificationPermission.value = window.Notification?.permission || 'Unknown'
   isSecure.value = window.location.protocol === 'https:'
   currentUrl.value = window.location.href
+  
+  // Get cross-platform capabilities
+  capabilities.value = crossPlatformNotifications.getCapabilities()
   
   // Check notification permission
   if ('Notification' in window) {
@@ -616,6 +648,15 @@ onMounted(() => {
 
 .btn-warning:hover {
   background: #e0a800;
+}
+
+.btn-info {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background: #138496;
 }
 
 .btn:disabled {
