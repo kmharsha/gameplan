@@ -13,7 +13,7 @@
           </template>
           Kanban View
         </Button>
-        <Button @click="showCreateDialog = true" class="bg-blue-600 text-white hover:bg-blue-700">
+        <Button @click="showCreateDialog = true" class="!bg-blue-600 !text-white hover:!bg-blue-700">
           <template #prefix>
             <LucidePlus class="size-4" />
           </template>

@@ -58,8 +58,11 @@
         </label>
         <TextInput
           v-model="form.version"
-          placeholder="e.g. 1.0, 2.1"
+          placeholder="Auto-generated version"
+          readonly
+          class="bg-gray-50 cursor-not-allowed"
         />
+        <p class="text-xs text-ink-gray-6 mt-1">Version is automatically generated based on existing attachments</p>
       </div>
       
       <!-- Description -->
@@ -88,7 +91,7 @@
           type="submit"
           :loading="uploading"
           :disabled="!selectedFile"
-          class="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+          class="!bg-blue-600 !text-white hover:!bg-blue-700 disabled:opacity-50"
         >
           Upload
         </Button>
@@ -121,6 +124,10 @@ export default defineComponent({
     attachedToName: {
       type: String,
       default: ''
+    },
+    existingAttachments: {
+      type: Array,
+      default: () => []
     }
   },
   emits: ['uploaded', 'cancel'],
@@ -131,8 +138,28 @@ const isDragOver = ref(false)
 const uploading = ref(false)
 const fileInput = ref<HTMLInputElement>()
 
+// Function to calculate the next version number
+const getNextVersion = () => {
+  if (!props.existingAttachments || props.existingAttachments.length === 0) {
+    return 'v1'
+  }
+  
+  // Extract version numbers from existing attachments
+  const versions = props.existingAttachments
+    .map(att => att.version || 'v1')
+    .map(version => {
+      // Handle both "v1", "v2" and "1.0", "2.0" formats
+      const match = version.match(/v?(\d+)/)
+      return match ? parseInt(match[1]) : 1
+    })
+    .sort((a, b) => b - a) // Sort descending to get highest version
+  
+  const nextVersionNumber = (versions[0] || 0) + 1
+  return `v${nextVersionNumber}`
+}
+
 const form = reactive({
-  version: '1.0',
+  version: getNextVersion(),
   description: ''
 })
 
@@ -236,7 +263,7 @@ const handleSubmit = async () => {
       
       // Reset form
       clearFile()
-      form.version = '1.0'
+      form.version = getNextVersion()
       form.description = ''
     } else {
       throw new Error('No file information in response')

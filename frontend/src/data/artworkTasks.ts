@@ -1,6 +1,10 @@
 import { reactive, ref, computed } from 'vue'
 import { createDocumentResource, createListResource, call } from 'frappe-ui'
 import { artworkApi, apiCall } from '@/utils/api'
+import { 
+  sendTaskStatusChangeNotification, 
+  sendTaskMovedFromProcurementBucketNotification 
+} from '../utils/taskNotifications'
 
 // Main artwork tasks list - Sales Tasks
 export const salesTasks = createListResource({
@@ -120,7 +124,25 @@ export function useArtworkKanban() {
 
   const moveTask = async (taskName: string, newStatus: string, reason?: string, comments?: string) => {
     try {
+      // Get task details before moving
+      const taskDetails = await artworkApi.getTaskDetails(taskName)
+      const oldStatus = taskDetails?.status
+      
       await artworkApi.updateTaskStatus(taskName, newStatus, reason || '', comments || '')
+      
+      // Send notification for status change
+      if (oldStatus && oldStatus !== newStatus) {
+        await sendTaskStatusChangeNotification({
+          taskId: taskName,
+          taskTitle: taskDetails?.title || 'Unknown Task',
+          fromStatus: oldStatus,
+          toStatus: newStatus,
+          movedBy: window.$session?.user?.name || 'Unknown User',
+          project: taskDetails?.project,
+          customer: taskDetails?.customer,
+          workflowType: taskDetails?.workflow_type
+        })
+      }
       
       // Refresh kanban data after successful move
       await fetchKanbanData()
@@ -375,9 +397,22 @@ export function useBucketTasks() {
 
   const moveFromBucket = async (taskName, newStatus = 'Procurement Review') => {
     try {
+      // Get task details before moving
+      const taskDetails = await artworkApi.getTaskDetails(taskName)
+      
       await apiCall('gameplan.api.move_task_from_bucket', {
         task_name: taskName,
         new_status: newStatus
+      })
+      
+      // Send notification for bucket movement
+      await sendTaskMovedFromProcurementBucketNotification({
+        taskId: taskName,
+        taskTitle: taskDetails?.title || 'Unknown Task',
+        newStatus: newStatus,
+        movedBy: window.$session?.user?.name || 'Unknown User',
+        project: taskDetails?.project,
+        customer: taskDetails?.customer
       })
       
       // Refresh bucket tasks after successful move

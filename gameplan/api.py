@@ -499,7 +499,8 @@ def test_artwork_api():
 def get_customers():
 	"""Get list of customers (GP Projects that represent customers)"""
 	user_roles = frappe.get_roles(frappe.session.user)
-	frappe.log_error(f"get_customers called by user: {frappe.session.user}, roles: {user_roles}", "Artwork API Debug")
+	# Log only essential info to avoid character limit exceeded error
+	frappe.log_error(f"get_customers called by user: {frappe.session.user}", "Artwork API Debug")
 	
 	artwork_roles = ["Sales Role", "Procurement Role", "Quality Role"]
 	has_artwork_role = any(role in user_roles for role in artwork_roles)
@@ -541,7 +542,8 @@ def get_customer_artworks(customer):
 	# Ensure customer is a string (handle both string and int inputs)
 	customer = str(customer)
 	user_roles = frappe.get_roles(frappe.session.user)
-	frappe.log_error(f"get_customer_artworks called for customer: {customer}, by user: {frappe.session.user}, roles: {user_roles}", "Artwork API Debug")
+	# Log only essential info to avoid character limit exceeded error
+	frappe.log_error(f"get_customer_artworks called for customer: {customer}, by user: {frappe.session.user}", "Artwork API Debug")
 	
 	artwork_roles = ["Sales Role", "Procurement Role", "Quality Role"]
 	has_artwork_role = any(role in user_roles for role in artwork_roles)
@@ -585,7 +587,8 @@ def create_artwork(customer, title, description="", priority="Medium",
 	budget = float(budget) if budget else 0
 	
 	user_roles = frappe.get_roles(frappe.session.user)
-	frappe.log_error(f"create_artwork called with customer: {customer}, title: {title}, by user: {frappe.session.user}, roles: {user_roles}", "Artwork API Debug")
+	# Log only essential info to avoid character limit exceeded error
+	frappe.log_error(f"create_artwork called with customer: {customer}, title: {title}, by user: {frappe.session.user}", "Artwork API Debug")
 	
 	# Allow Sales Role to create artworks
 	if "Sales Role" not in user_roles and "System Manager" not in user_roles and "Gameplan Admin" not in user_roles and "Gameplan Member" not in user_roles:
@@ -1164,8 +1167,9 @@ def get_bucket_tasks(customer_filter=None, sort_by="cycle_count", sort_order="de
 		frappe.throw("You don't have permission to view bucket tasks")
 	
 	# Build filters - Bucket tasks are in the Procurement Bucket
+	# Include both "Bucket" and "Final Approved" tasks as they are ready for procurement processing
 	filters = {
-		"status": "Bucket"
+		"status": ["in", ["Bucket", "Final Approved"]]
 	}
 	
 	# Add customer filter if provided
@@ -1571,12 +1575,13 @@ def get_bucket_stats():
 		frappe.throw("You don't have permission to view bucket stats")
 	
 	# Get total Bucket tasks from both doctypes
+	# Include both "Bucket" and "Final Approved" tasks as they are ready for procurement processing
 	total_sales_tasks = frappe.db.count("GP Sales Task", {
-		"status": "Bucket"
+		"status": ["in", ["Bucket", "Final Approved"]]
 	})
 	
 	total_procurement_tasks = frappe.db.count("GP Procurement Task", {
-		"status": "Bucket"
+		"status": ["in", ["Bucket", "Final Approved"]]
 	})
 	
 	total_bucket_tasks = total_sales_tasks + total_procurement_tasks
@@ -1585,9 +1590,9 @@ def get_bucket_stats():
 	customer_stats = frappe.db.sql("""
 		SELECT t.customer, p.title as customer_title, COUNT(*) as count
 		FROM (
-			SELECT customer FROM `tabGP Sales Task` WHERE status = 'Bucket'
+			SELECT customer FROM `tabGP Sales Task` WHERE status IN ('Bucket', 'Final Approved')
 			UNION ALL
-			SELECT customer FROM `tabGP Procurement Task` WHERE status = 'Bucket'
+			SELECT customer FROM `tabGP Procurement Task` WHERE status IN ('Bucket', 'Final Approved')
 		) t
 		LEFT JOIN `tabGP Project` p ON t.customer = p.name
 		GROUP BY t.customer, p.title

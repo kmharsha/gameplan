@@ -28,7 +28,7 @@
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <Button @click="$router.back()" class="p-1 bg-surface-white border border-outline-gray-2">
+                  <Button @click="$router.back()" class="p-1 !bg-blue-600 !text-white hover:!bg-blue-700 border border-outline-gray-2">
                     <LucideArrowLeft class="size-4" />
                   </Button>
                   <h1 class="text-xl font-semibold text-ink-gray-9">{{ task.title }}</h1>
@@ -195,14 +195,14 @@
                     <h3 class="font-medium text-ink-gray-9">Attachments</h3>
                     <Button 
                       @click="showAttachmentDialog = true"
-                      class="p-1 bg-surface-white border border-outline-gray-2"
+                      class="p-1 !bg-blue-600 !text-white hover:!bg-blue-700 border border-outline-gray-2"
                     >
                       <LucidePlus class="size-4" />
                     </Button>
                   </div>
                   <div class="space-y-2">
                     <div 
-                      v-for="attachment in task.attachments"
+                      v-for="attachment in sortedAttachments"
                       :key="attachment.name"
                       class="flex items-center gap-3 p-2 bg-surface-gray-1 rounded"
                     >
@@ -215,12 +215,21 @@
                           v{{ attachment.version }} • {{ attachment.file_size }}
                         </p>
                       </div>
-                      <Button 
-                        @click="downloadAttachment(attachment)"
-                        class="p-1 bg-surface-white border border-outline-gray-2"
-                      >
-                        <LucideDownload class="size-3" />
-                      </Button>
+                      <div class="flex items-center gap-1">
+                        <Button 
+                          v-if="isPreviewableFile(attachment.file_name)"
+                          @click="previewAttachment(attachment)"
+                          class="p-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 border border-blue-500 shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <LucideEye class="size-3" />
+                        </Button>
+                        <Button 
+                          @click="downloadAttachment(attachment)"
+                          class="p-1 bg-gradient-to-r from-red-500 to-red-700 text-white hover:from-red-600 hover:to-red-800 border border-red-500 shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <LucideDownload class="size-3" />
+                        </Button>
+                      </div>
                     </div>
                     <div v-if="!task.attachments?.length" class="text-center py-4 text-ink-gray-5">
                       No attachments yet
@@ -363,13 +372,13 @@
 
                   <div class="flex items-center justify-between gap-2 mt-3">
                     <div class="flex items-center gap-2">
-                      <Button
+                      <button
                         @click="showFileUploader = true"
-                        class="bg-surface-white border border-outline-gray-2 text-ink-gray-9 hover:bg-surface-gray-1"
+                        class="bg-blue-600 text-white hover:bg-blue-700 border border-blue-600 px-2 py-1.5 rounded text-sm font-medium inline-flex items-center gap-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       >
-                        <LucidePaperclip class="size-4 mr-1" />
+                        <LucidePaperclip class="size-3.5" />
                         Attach File
-                      </Button>
+                      </button>
                       <span v-if="commentAttachments.length > 0" class="text-xs text-ink-gray-6">
                         {{ commentAttachments.length }} file{{ commentAttachments.length !== 1 ? 's' : '' }} attached
                       </span>
@@ -385,7 +394,7 @@
                         @click="handleAddComment"
                         :loading="addingComment"
                         :disabled="isSubmitDisabled"
-                        class="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                        class="!bg-blue-600 !text-white hover:!bg-blue-700 disabled:opacity-50"
                       >
                         Submit
                       </Button>
@@ -468,13 +477,13 @@
 
               <div class="flex items-center justify-between gap-2 mt-3">
                 <div class="flex items-center gap-2">
-                  <Button
+                  <button
                     @click="showFileUploader = true"
-                    class="bg-surface-white border border-outline-gray-2 text-ink-gray-9 hover:bg-surface-gray-1"
+                    class="bg-blue-600 text-white hover:bg-blue-700 border border-blue-600 px-2 py-1.5 rounded text-sm font-medium inline-flex items-center gap-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    <LucidePaperclip class="size-4 mr-1" />
+                    <LucidePaperclip class="size-3.5" />
                     Attach File
-                  </Button>
+                  </button>
                   <span v-if="commentAttachments.length > 0" class="text-xs text-ink-gray-6">
                     {{ commentAttachments.length }} file{{ commentAttachments.length !== 1 ? 's' : '' }} attached
                   </span>
@@ -490,7 +499,7 @@
                     @click="handleAddComment"
                     :loading="addingComment"
                     :disabled="isSubmitDisabled"
-                    class="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                    class="!bg-blue-600 !text-white hover:!bg-blue-700 disabled:opacity-50"
                   >
                     Submit
                   </Button>
@@ -521,6 +530,7 @@
         <AddAttachmentDialog
           :attached-to-doctype="'GP Artwork Task'"
           :attached-to-name="taskId"
+          :existing-attachments="taskDetails?.task?.attachments || []"
           @uploaded="handleAttachmentUploaded"
           @cancel="showAttachmentDialog = false"
         />
@@ -606,6 +616,7 @@ import LucidePlus from '~icons/lucide/plus'
 import LucideFile from '~icons/lucide/file'
 import LucideDownload from '~icons/lucide/download'
 import LucidePaperclip from '~icons/lucide/paperclip'
+import LucideEye from '~icons/lucide/eye'
 import LucideX from '~icons/lucide/x'
 import LucideArrowRight from '~icons/lucide/arrow-right'
 import LucidePackage from '~icons/lucide/package'
@@ -642,6 +653,20 @@ const allowedTransitions = computed(() => {
 const relatedTasks = computed(() => {
   console.log('[ArtworkTask] Related tasks:', taskDetails.value?.related_tasks)
   return taskDetails.value?.related_tasks || {}
+})
+
+// Sort attachments by upload date (newest first)
+const sortedAttachments = computed(() => {
+  if (!task.value?.attachments) return []
+  
+  return [...task.value.attachments].sort((a, b) => {
+    // Sort by upload_date if available, otherwise by creation order
+    const dateA = a.upload_date || a.creation || new Date(0)
+    const dateB = b.upload_date || b.creation || new Date(0)
+    
+    // Sort in descending order (newest first)
+    return new Date(dateB).getTime() - new Date(dateA).getTime()
+  })
 })
 
 // Enhanced submit button logic
@@ -811,6 +836,26 @@ const downloadAttachment = (attachment: any) => {
   link.href = attachment.file_url
   link.download = attachment.file_name
   link.click()
+}
+
+const isPreviewableFile = (fileName: string): boolean => {
+  const previewableExtensions = [
+    // Image files
+    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg',
+    // Document files
+    '.pdf', '.txt', '.md', '.rtf',
+    // Office files
+    '.xlsx', '.xls', '.docx', '.doc', '.pptx', '.ppt',
+    // Other previewable files
+    '.csv', '.json', '.xml', '.html', '.htm'
+  ]
+  const extension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'))
+  return previewableExtensions.includes(extension)
+}
+
+const previewAttachment = (attachment: any) => {
+  // Open the file in a new tab for preview
+  window.open(attachment.file_url, '_blank')
 }
 
 // Comment file handling functions

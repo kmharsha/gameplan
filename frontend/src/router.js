@@ -48,6 +48,11 @@ let router = createRouter({
       component: () => import('@/pages/Drafts.vue'),
     },
     {
+      name: 'NotificationDemo',
+      path: '/notification-demo',
+      component: () => import('@/pages/NotificationDemo.vue'),
+    },
+    {
       name: 'MyTasks',
       path: '/tasks',
       component: () => import('@/pages/MyTasks.vue'),
@@ -76,7 +81,7 @@ let router = createRouter({
   {
     name: 'SalesBucket',
     path: '/sales-bucket',
-    component: () => import('@/pages/SalesBucket.vue'),buttons. 
+    component: () => import('@/pages/SalesBucket.vue'),
   },
     {
       name: 'ArtworkTask',
