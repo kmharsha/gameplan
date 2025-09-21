@@ -166,15 +166,40 @@ class CrossPlatformNotificationService {
   // Send notification to all devices of a user
   async sendToAllDevices(userId: string, options: NotificationOptions): Promise<void> {
     try {
-      // This would typically call your backend API
-      // which then sends to all registered devices
       console.log('Sending notification to all devices for user:', userId)
       
-      // For now, just show locally
+      // Call backend API to send to all devices
+      const response = await fetch('/api/method/gameplan.gameplan.api.cross_device_notifications.send_to_all_devices', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': window.csrf_token || ''
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          title: options.title,
+          body: options.body,
+          notification_type: options.data?.notification_type || 'System',
+          data: options.data
+        })
+      })
+      
+      const result = await response.json()
+      console.log('Cross-device notification result:', result)
+      
+      if (result.message && result.message.success) {
+        console.log(`Notification sent to ${result.message.devices_notified} devices`)
+      } else {
+        console.warn('Cross-device notification failed:', result.message)
+      }
+      
+      // Also show locally
       await this.showNotification(options)
       
     } catch (error) {
       console.error('Failed to send to all devices:', error)
+      // Still show locally even if cross-device fails
+      await this.showNotification(options)
       throw error
     }
   }
@@ -220,11 +245,20 @@ class CrossPlatformNotificationService {
 
   // Test notification
   async testNotification(): Promise<void> {
-    await this.showNotification({
+    // Get current user ID
+    const userId = window.user?.name || 'Administrator'
+    
+    // Send to all devices
+    await this.sendToAllDevices(userId, {
       title: 'Test Cross-Platform Notification',
       body: 'This notification works on desktop, mobile, and PWA!',
       tag: 'test-cross-platform',
-      requireInteraction: true
+      requireInteraction: true,
+      data: {
+        notification_type: 'System',
+        test: true,
+        timestamp: new Date().toISOString()
+      }
     })
   }
 }

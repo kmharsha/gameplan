@@ -461,6 +461,10 @@ onMounted(() => {
   // Get cross-platform capabilities
   capabilities.value = crossPlatformNotifications.getCapabilities()
   
+  // Register device for cross-device notifications
+  const currentUser = window.user?.name || 'Administrator'
+  crossPlatformNotifications.registerDevice(currentUser)
+  
   // Check notification permission
   if ('Notification' in window) {
     permissionStatus.value = Notification.permission === 'granted' ? 'Granted' : 'Not Granted'
