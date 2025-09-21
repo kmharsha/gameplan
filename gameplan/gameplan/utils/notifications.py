@@ -28,6 +28,10 @@ class NotificationManager:
 			data (dict): Additional data
 			publish_realtime (bool): Whether to publish real-time event
 		"""
+		# Don't create notification if no recipient is specified
+		if not recipient_user and not recipient_role:
+			return None
+			
 		# Create notification log
 		notification = frappe.get_doc({
 			"doctype": "GP Notification Log",
@@ -129,15 +133,18 @@ class NotificationManager:
 		if task_doc.assigned_to and task_doc.assigned_to != changed_by:
 			recipient_user = task_doc.assigned_to
 		
-		return NotificationManager.send_notification(
-			title=title,
-			body=body,
-			notification_type="Task Status Change",
-			recipient_user=recipient_user,
-			reference_doctype="GP Task",
-			reference_name=task_doc.name,
-			data=data
-		)
+		# Only send notification if there's a valid recipient
+		if recipient_user:
+			return NotificationManager.send_notification(
+				title=title,
+				body=body,
+				notification_type="Task Status Change",
+				recipient_user=recipient_user,
+				reference_doctype="GP Task",
+				reference_name=task_doc.name,
+				data=data
+			)
+		return None
 
 	@staticmethod
 	def send_task_movement_notification(task_doc, from_bucket, to_bucket, moved_by):
@@ -159,15 +166,18 @@ class NotificationManager:
 		if task_doc.assigned_to and task_doc.assigned_to != moved_by:
 			recipient_user = task_doc.assigned_to
 		
-		return NotificationManager.send_notification(
-			title=title,
-			body=body,
-			notification_type="Task Movement",
-			recipient_user=recipient_user,
-			reference_doctype="GP Task",
-			reference_name=task_doc.name,
-			data=data
-		)
+		# Only send notification if there's a valid recipient
+		if recipient_user:
+			return NotificationManager.send_notification(
+				title=title,
+				body=body,
+				notification_type="Task Movement",
+				recipient_user=recipient_user,
+				reference_doctype="GP Task",
+				reference_name=task_doc.name,
+				data=data
+			)
+		return None
 
 	@staticmethod
 	def send_project_update_notification(project_doc, update_type, updated_by):

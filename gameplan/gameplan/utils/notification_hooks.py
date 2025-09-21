@@ -76,15 +76,17 @@ def send_artwork_task_notifications(doc, method):
 			if doc.assigned_to and doc.assigned_to != frappe.session.user:
 				recipient_user = doc.assigned_to
 			
-			NotificationManager.send_notification(
-				title=title,
-				body=body,
-				notification_type="Task Status Change",
-				recipient_user=recipient_user,
-				reference_doctype="GP Artwork Task",
-				reference_name=doc.name,
-				data=data
-			)
+			# Only send notification if there's a valid recipient
+			if recipient_user:
+				NotificationManager.send_notification(
+					title=title,
+					body=body,
+					notification_type="Task Status Change",
+					recipient_user=recipient_user,
+					reference_doctype="GP Artwork Task",
+					reference_name=doc.name,
+					data=data
+				)
 		
 		# Check for assignment changes
 		if old_doc and old_doc.assigned_to != doc.assigned_to and doc.assigned_to:
