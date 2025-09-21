@@ -104,6 +104,8 @@ const loadNotifications = async () => {
   try {
     loading.value = true
     console.log('Loading notifications...')
+    console.log('Current user from window:', window.user)
+    console.log('Session user from frappe:', window.frappe?.session?.user)
     
     const response = await frappeRequest({
       url: '/api/method/gameplan.gameplan.api.notifications.get_user_notifications',
@@ -113,17 +115,30 @@ const loadNotifications = async () => {
     })
     
     console.log('Notification API response:', response)
+    console.log('Response type:', typeof response)
+    console.log('Response message:', response?.message)
+    console.log('Response is array:', Array.isArray(response))
     
+    // Handle both response.message and direct response
+    let notificationData = null
     if (response && response.message) {
-      notifications.value = response.message
+      notificationData = response.message
+    } else if (Array.isArray(response)) {
+      notificationData = response
+    }
+    
+    if (notificationData && notificationData.length > 0) {
+      notifications.value = notificationData
       console.log('Loaded notifications:', notifications.value.length)
       console.log('Notifications data:', notifications.value)
     } else {
       console.log('No notifications found or invalid response')
+      console.log('Response structure:', Object.keys(response || {}))
     }
   } catch (error) {
     console.error('Error loading notifications:', error)
-    alert('Error loading notifications: ' + error.message)
+    console.error('Error details:', error.response || error.message)
+    alert('Error loading notifications: ' + (error.response?.data?.message || error.message))
   } finally {
     loading.value = false
   }
@@ -137,8 +152,9 @@ const sendTestNotification = async () => {
     // Try to send notification to current user instead of Administrator
     const currentUser = window.user?.name || 'Administrator'
     console.log('Current user:', currentUser)
+    console.log('Window user object:', window.user)
     
-    await frappeRequest({
+    const response = await frappeRequest({
       url: '/api/method/gameplan.gameplan.api.notifications.send_system_notification',
       params: {
         title: 'Test Notification',
@@ -147,12 +163,19 @@ const sendTestNotification = async () => {
       }
     })
     
+    console.log('Test notification API response:', response)
     console.log('Test notification sent successfully')
-    // Refresh notifications after sending
-    await loadNotifications()
+    
+    // Wait a moment for the notification to be created
+    setTimeout(async () => {
+      console.log('Refreshing notifications after delay...')
+      await loadNotifications()
+    }, 1000)
+    
   } catch (error) {
     console.error('Error sending notification:', error)
-    alert('Error sending notification: ' + error.message)
+    console.error('Error details:', error.response || error.message)
+    alert('Error sending notification: ' + (error.response?.data?.message || error.message))
   } finally {
     loading.value = false
   }
