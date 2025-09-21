@@ -10,7 +10,13 @@ cd ~/frappe-bench/frappe-bench
 
 # Update Socket.IO CORS configuration
 echo "Updating Socket.IO CORS configuration..."
-sudo sed -i 's/origin: true,/origin: ["https:\/\/65.1.189.119", "http:\/\/65.1.189.119"],/g' apps/frappe/realtime/index.js
+sudo sed -i 's/origin: true,/origin: ["https:\/\/65.1.189.119", "http:\/\/65.1.189.119", "https:\/\/localhost", "http:\/\/localhost"],/g' apps/frappe/realtime/index.js
+
+# Also update the socketio.js file if it exists
+if [ -f "apps/frappe/socketio.js" ]; then
+    echo "Updating socketio.js CORS configuration..."
+    sudo sed -i 's/origin: true,/origin: ["https:\/\/65.1.189.119", "http:\/\/65.1.189.119", "https:\/\/localhost", "http:\/\/localhost"],/g' apps/frappe/socketio.js
+fi
 
 # Verify the change
 echo "Verifying CORS configuration..."
@@ -27,13 +33,14 @@ cat sites/common_site_config.json | grep socketio_port
 # Stop any existing Socket.IO processes
 echo "Stopping existing Socket.IO processes..."
 pkill -f socketio
+sleep 2
 
 # Start Socket.IO server
 echo "Starting Socket.IO server..."
 nohup node apps/frappe/socketio.js > socketio.log 2>&1 &
 
 # Wait a moment for the server to start
-sleep 2
+sleep 5
 
 # Check if Socket.IO is running
 echo "Checking Socket.IO status..."
@@ -43,6 +50,12 @@ ps aux | grep socketio | grep -v grep
 echo "Testing Socket.IO connection..."
 curl -k "https://65.1.189.119/socket.io/?EIO=4&transport=polling" 2>/dev/null | head -c 100
 echo ""
+
+# Check for any errors in the log
+echo "Checking for errors in socketio.log..."
+if [ -f "socketio.log" ]; then
+    tail -20 socketio.log
+fi
 
 echo "Socket.IO setup complete!"
 echo "Check the logs with: tail -f socketio.log"

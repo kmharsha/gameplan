@@ -10,15 +10,15 @@ export function initSocket() {
   let host = window.location.hostname
   let siteName = window.site_name
   
-  // For production, use the same port as the web server (HTTPS)
-  // For development, use the socketio port
   let port = ''
   let protocol = window.location.protocol === 'https:' ? 'https' : 'http'
   
-  // Only add socketio port for development
-  if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
+  // For development (localhost), use socketio port
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     port = `:${socketio_port}`
   }
+  // For production with HTTPS, use the same port as web server (no additional port)
+  // The nginx configuration will proxy /socket.io/ to the socketio server
   
   let url = `${protocol}://${host}${port}/${siteName}`
 
@@ -29,7 +29,11 @@ export function initSocket() {
     reconnectionAttempts: 5,
     transports: ['polling', 'websocket'],
     timeout: 20000,
-    forceNew: true
+    forceNew: true,
+    // Add additional options for better production compatibility
+    autoConnect: true,
+    upgrade: true,
+    rememberUpgrade: false
   })
   
   // Handle resource refetch
