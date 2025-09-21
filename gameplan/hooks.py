@@ -146,19 +146,23 @@ doc_events = {
 		],
 		"on_update": "gameplan.gameplan.doctype.gp_user_profile.gp_user_profile.on_user_update",
 	},
-		# Notification hooks disabled for now - using Frappe's built-in system
-		# "GP Task": {
-		# 	"after_insert": "gameplan.gameplan.utils.notification_hooks.send_task_notifications",
-		# 	"on_update": "gameplan.gameplan.utils.notification_hooks.send_task_notifications",
-		# },
-		# "GP Artwork Task": {
-		# 	"after_insert": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
-		# 	"on_update": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
-		# },
-		# "GP Project": {
-		# 	"after_insert": "gameplan.gameplan.utils.notification_hooks.send_project_notifications",
-		# 	"on_update": "gameplan.gameplan.utils.notification_hooks.send_project_notifications",
-		# },
+		# Notification hooks for real-time push notifications
+		"GP Artwork Task": {
+			"after_insert": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
+			"on_update": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
+		},
+		"GP Sales Task": {
+			"after_insert": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
+			"on_update": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
+		},
+		"GP Procurement Task": {
+			"after_insert": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
+			"on_update": "gameplan.gameplan.utils.notification_hooks.send_artwork_task_notifications",
+		},
+		"GP Project": {
+			"after_insert": "gameplan.gameplan.utils.notification_hooks.send_project_notifications",
+			"on_update": "gameplan.gameplan.utils.notification_hooks.send_project_notifications",
+		},
 }
 
 on_login = "gameplan.www.g.on_login"
