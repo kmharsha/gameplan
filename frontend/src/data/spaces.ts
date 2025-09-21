@@ -34,7 +34,7 @@ export let spaces = useList<Space>({
     'modified',
     'tasks_count',
     'discussions_count',
-    { members: ['user'] },
+    'members',
   ],
   initialData: [],
   orderBy: 'title asc',

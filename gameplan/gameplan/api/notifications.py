@@ -1,3 +1,4 @@
+from gameplan.gameplan.utils.simple_notifications import send_notification as send_simple_notification
 """
 API methods for notifications
 """
@@ -98,7 +99,7 @@ def send_notification(title, body, notification_type="Custom",
 		except:
 			data = None
 	
-	return NotificationManager.send_notification(
+	return send_simple_notification(
 		title=title,
 		body=body,
 		notification_type=notification_type,
@@ -185,7 +186,7 @@ def send_task_status_change_notification(task_id, task_title, from_status, to_st
 	except:
 		pass
 	
-	return NotificationManager.send_notification(
+	return send_simple_notification(
 		title=title,
 		body=body,
 		notification_type="Task Status Change",
@@ -223,7 +224,7 @@ def send_task_bucket_movement_notification(task_id, task_title, from_bucket, to_
 	except:
 		pass
 	
-	return NotificationManager.send_notification(
+	return send_simple_notification(
 		title=title,
 		body=body,
 		notification_type="Task Movement",
@@ -251,7 +252,7 @@ def send_task_assignment_notification(task_id, task_title, assigned_to, assigned
 		"workflow_type": workflow_type
 	}
 	
-	return NotificationManager.send_notification(
+	return send_simple_notification(
 		title=title,
 		body=body,
 		notification_type="Task Assignment",
@@ -282,7 +283,7 @@ def send_task_created_notification(task_id, task_title, created_by, assigned_to=
 	# Send to assignee if assigned
 	recipient_user = assigned_to
 	
-	return NotificationManager.send_notification(
+	return send_simple_notification(
 		title=title,
 		body=body,
 		notification_type="Task Assignment",
@@ -310,7 +311,7 @@ def send_task_moved_to_sales_bucket_notification(task_id, task_title, moved_by,
 	}
 	
 	# Send to sales team
-	return NotificationManager.send_notification(
+	return send_simple_notification(
 		title=title,
 		body=body,
 		notification_type="Task Movement",
@@ -339,7 +340,7 @@ def send_task_moved_from_procurement_bucket_notification(task_id, task_title, ne
 	}
 	
 	# Send to procurement team
-	return NotificationManager.send_notification(
+	return send_simple_notification(
 		title=title,
 		body=body,
 		notification_type="Task Movement",

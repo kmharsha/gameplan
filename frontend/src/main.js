@@ -1,3 +1,4 @@
+import { notificationService } from "./services/notificationService"
 import { createApp } from 'vue'
 import {
   Button,
@@ -22,7 +23,7 @@ import { getPlatform } from './utils'
 import { createDialog } from './utils/dialogs'
 import { useUser, users } from './data/users'
 import { isSessionUser, session } from './data/session'
-import { initSocket } from './socket'
+import { initSocket, onNotification } from './socket'
 import resetDataMixin from './utils/resetDataMixin'
 
 let globalComponents = {
@@ -63,12 +64,32 @@ if (import.meta.env.DEV) {
     }
     window.system_timezone && setConfig('systemTimezone', window.system_timezone)
     socket = initSocket()
+
+// Connect notification service to socket
+onNotification((notification) => {
+  notificationService.showNotification(notification)
+})
+
+// Initialize notification service
+notificationService.initialize()
+
+// Connect notification service to socket
     app.config.globalProperties.$socket = socket
     app.mount('#app')
   })
 } else {
   window.system_timezone && setConfig('systemTimezone', window.system_timezone)
   socket = initSocket()
+
+// Connect notification service to socket
+onNotification((notification) => {
+  notificationService.showNotification(notification)
+})
+
+// Initialize notification service
+notificationService.initialize()
+
+// Connect notification service to socket
   app.config.globalProperties.$socket = socket
   app.mount('#app')
 }

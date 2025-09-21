@@ -10,11 +10,6 @@ export function initSocket() {
   let host = window.location.hostname
   let siteName = window.site_name
   
-  // Fix for when site_name is the same as hostname (IP address)
-  if (siteName === host) {
-    siteName = '' // Use empty string for root path
-  }
-  
   let port = ''
   let protocol = window.location.protocol === 'https:' ? 'https' : 'http'
   
@@ -22,6 +17,8 @@ export function initSocket() {
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     port = `:${socketio_port}`
   }
+  // For production with HTTPS, use the same port as web server (no additional port)
+  // The nginx configuration will proxy /socket.io/ to the socketio server
   
   let url = `${protocol}://${host}${port}/${siteName}`
 
