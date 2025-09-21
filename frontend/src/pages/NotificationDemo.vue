@@ -45,6 +45,37 @@
       </div>
     </div>
 
+    <!-- Device Management -->
+    <div class="section">
+      <h2>Device Management</h2>
+      <div class="buttons">
+        <button @click="loadUserDevices" class="btn btn-info">
+          Load My Devices
+        </button>
+        <button @click="cleanupOldDevices" class="btn btn-warning">
+          Cleanup Old Devices
+        </button>
+      </div>
+      
+      <div v-if="userDevices.length > 0" class="device-list">
+        <h3>Registered Devices ({{ userDevices.length }})</h3>
+        <div v-for="device in userDevices" :key="device.device_id" class="device-item">
+          <div class="device-header">
+            <span class="device-type">{{ device.device_type }}</span>
+            <span class="device-status" :class="device.is_online ? 'online' : 'offline'">
+              {{ device.is_online ? '🟢 Online' : '🔴 Offline' }}
+            </span>
+          </div>
+          <div class="device-details">
+            <p><strong>Device ID:</strong> {{ device.device_id }}</p>
+            <p><strong>Last Seen:</strong> {{ formatTime(device.last_seen) }}</p>
+            <p><strong>User Agent:</strong> {{ device.user_agent?.substring(0, 50) }}...</p>
+            <p v-if="device.ip_address"><strong>IP:</strong> {{ device.ip_address }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Test Notifications -->
     <div class="section">
       <h2>Test Notifications</h2>
@@ -132,6 +163,9 @@ const capabilities = ref({
   serviceWorker: false,
   deviceId: ''
 })
+
+// Device management
+const userDevices = ref([])
 
 // Computed properties
 const unreadCount = computed(() => {
@@ -448,6 +482,58 @@ const formatTime = (timestamp) => {
   return new Date(timestamp).toLocaleString()
 }
 
+// Device management methods
+const loadUserDevices = async () => {
+  try {
+    console.log('Loading user devices...')
+    
+    const response = await frappeRequest({
+      url: '/api/method/gameplan.gameplan.api.cross_device_notifications.get_user_devices'
+    })
+    
+    console.log('User devices response:', response)
+    
+    if (response && response.message && response.message.success) {
+      userDevices.value = response.message.devices || []
+      console.log(`Loaded ${userDevices.value.length} devices`)
+    } else {
+      console.warn('Failed to load devices:', response?.message)
+      userDevices.value = []
+    }
+    
+  } catch (error) {
+    console.error('Error loading user devices:', error)
+    alert('Error loading devices: ' + (error.response?.data?.message || error.message))
+  }
+}
+
+const cleanupOldDevices = async () => {
+  try {
+    console.log('Cleaning up old devices...')
+    
+    const response = await frappeRequest({
+      url: '/api/method/gameplan.gameplan.api.cross_device_notifications.cleanup_old_devices',
+      params: {
+        days: 30
+      }
+    })
+    
+    console.log('Cleanup response:', response)
+    
+    if (response && response.message && response.message.success) {
+      alert(`Cleaned up ${response.message.cleaned_count} old devices`)
+      // Reload devices after cleanup
+      await loadUserDevices()
+    } else {
+      alert('Cleanup failed: ' + (response?.message?.message || 'Unknown error'))
+    }
+    
+  } catch (error) {
+    console.error('Error cleaning up devices:', error)
+    alert('Error cleaning up devices: ' + (error.response?.data?.message || error.message))
+  }
+}
+
 // Lifecycle
 onMounted(() => {
   loadNotifications()
@@ -460,6 +546,10 @@ onMounted(() => {
   
   // Get cross-platform capabilities
   capabilities.value = crossPlatformNotifications.getCapabilities()
+  
+  // Register device for cross-device notifications
+  const currentUser = window.user?.name || 'Administrator'
+  crossPlatformNotifications.registerDevice(currentUser)
   
   // Check notification permission
   if ('Notification' in window) {
@@ -657,6 +747,51 @@ onMounted(() => {
 
 .btn-info:hover {
   background: #138496;
+}
+
+.device-list {
+  margin-top: 20px;
+}
+
+.device-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border-left: 4px solid #007bff;
+}
+
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.device-type {
+  font-weight: bold;
+  color: #333;
+  text-transform: capitalize;
+}
+
+.device-status {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.device-status.online {
+  color: #28a745;
+}
+
+.device-status.offline {
+  color: #dc3545;
+}
+
+.device-details p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .btn:disabled {
