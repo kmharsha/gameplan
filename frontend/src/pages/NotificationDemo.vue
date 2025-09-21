@@ -30,6 +30,17 @@
       </div>
     </div>
 
+    <!-- Notification Status -->
+    <div class="section">
+      <h2>Notification Status</h2>
+      <div class="status-info">
+        <p><strong>Browser Support:</strong> {{ 'Notification' in window ? '✅ Supported' : '❌ Not Supported' }}</p>
+        <p><strong>Permission Status:</strong> {{ Notification.permission || 'Unknown' }}</p>
+        <p><strong>HTTPS Required:</strong> {{ window.location.protocol === 'https:' ? '✅ Secure' : '❌ Not Secure (HTTPS required for notifications)' }}</p>
+        <p><strong>Current URL:</strong> {{ window.location.href }}</p>
+      </div>
+    </div>
+
     <!-- Test Notifications -->
     <div class="section">
       <h2>Test Notifications</h2>
@@ -42,6 +53,9 @@
         </button>
         <button @click="testBrowserNotification" class="btn btn-success">
           Test Browser Popup
+        </button>
+        <button @click="forceTestNotification" class="btn btn-warning">
+          Force Test (No Permission Check)
         </button>
         <button @click="refreshNotifications" class="btn btn-secondary">
           Refresh
@@ -357,6 +371,44 @@ const testBrowserNotification = () => {
   }
 }
 
+const forceTestNotification = () => {
+  console.log('Force testing browser notification (ignoring permission)...')
+  
+  if (!('Notification' in window)) {
+    alert('Browser notifications are not supported in this browser.')
+    return
+  }
+  
+  try {
+    // Try to create notification regardless of permission status
+    const notification = new Notification('Force Test Notification', {
+      body: 'This is a force test notification that should work!',
+      icon: '/favicon.png',
+      tag: 'force-test-' + Date.now(),
+      requireInteraction: false
+    })
+    
+    console.log('Force test notification created:', notification)
+    
+    notification.onclick = () => {
+      console.log('Force test notification clicked')
+      window.focus()
+      notification.close()
+    }
+    
+    setTimeout(() => {
+      notification.close()
+      console.log('Force test notification auto-closed')
+    }, 5000)
+    
+    alert('Force test notification sent! Check your browser for the popup.')
+    
+  } catch (error) {
+    console.error('Force test notification failed:', error)
+    alert('Force test failed: ' + error.message + '\n\nThis usually means:\n1. Notifications are blocked by browser\n2. Site is not secure (HTTPS required)\n3. Browser doesn\'t support notifications')
+  }
+}
+
 const refreshNotifications = () => {
   loadNotifications()
 }
@@ -375,6 +427,37 @@ onMounted(() => {
   } else {
     permissionStatus.value = 'Not Supported'
   }
+  
+  // Auto-test browser notifications on page load (for testing)
+  setTimeout(() => {
+    console.log('Auto-testing browser notifications...')
+    if (Notification.permission === 'granted') {
+      console.log('Permission already granted, showing auto-test notification')
+      try {
+        const notification = new Notification('Auto-Test Notification', {
+          body: 'This is an automatic test notification when the page loads!',
+          icon: '/favicon.png',
+          tag: 'auto-test',
+          requireInteraction: false
+        })
+        
+        notification.onclick = () => {
+          console.log('Auto-test notification clicked')
+          window.focus()
+          notification.close()
+        }
+        
+        setTimeout(() => {
+          notification.close()
+        }, 3000)
+        
+      } catch (error) {
+        console.error('Auto-test notification failed:', error)
+      }
+    } else {
+      console.log('Permission not granted, skipping auto-test')
+    }
+  }, 2000)
 })
 </script>
 
@@ -449,6 +532,19 @@ onMounted(() => {
   color: #333;
 }
 
+.status-info {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.status-info p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
 .buttons {
   display: flex;
   gap: 10px;
@@ -504,6 +600,15 @@ onMounted(() => {
 
 .btn-success:hover {
   background: #218838;
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background: #e0a800;
 }
 
 .btn:disabled {
