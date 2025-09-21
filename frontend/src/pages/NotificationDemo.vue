@@ -103,6 +103,8 @@ const unreadCount = computed(() => {
 const loadNotifications = async () => {
   try {
     loading.value = true
+    console.log('Loading notifications...')
+    
     const response = await frappeRequest({
       url: '/api/method/gameplan.gameplan.api.notifications.get_user_notifications',
       params: {
@@ -110,12 +112,18 @@ const loadNotifications = async () => {
       }
     })
     
+    console.log('Notification API response:', response)
+    
     if (response && response.message) {
       notifications.value = response.message
       console.log('Loaded notifications:', notifications.value.length)
+      console.log('Notifications data:', notifications.value)
+    } else {
+      console.log('No notifications found or invalid response')
     }
   } catch (error) {
     console.error('Error loading notifications:', error)
+    alert('Error loading notifications: ' + error.message)
   } finally {
     loading.value = false
   }
@@ -124,19 +132,27 @@ const loadNotifications = async () => {
 const sendTestNotification = async () => {
   try {
     loading.value = true
+    console.log('Sending test notification...')
+    
+    // Try to send notification to current user instead of Administrator
+    const currentUser = window.user?.name || 'Administrator'
+    console.log('Current user:', currentUser)
+    
     await frappeRequest({
       url: '/api/method/gameplan.gameplan.api.notifications.send_system_notification',
       params: {
         title: 'Test Notification',
         body: 'This is a test notification from Gameplan!',
-        recipient_user: 'Administrator'
+        recipient_user: currentUser
       }
     })
     
+    console.log('Test notification sent successfully')
     // Refresh notifications after sending
     await loadNotifications()
   } catch (error) {
     console.error('Error sending notification:', error)
+    alert('Error sending notification: ' + error.message)
   } finally {
     loading.value = false
   }

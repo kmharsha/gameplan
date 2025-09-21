@@ -30,8 +30,10 @@ class NotificationManager:
 		"""
 		# Don't create notification if no recipient is specified
 		if not recipient_user and not recipient_role:
+			print(f"[DEBUG] No notification created - no recipient specified")
 			return None
 			
+		print(f"[DEBUG] Creating notification: title='{title}', recipient_user='{recipient_user}', recipient_role='{recipient_role}'")
 		# Create notification log
 		notification = frappe.get_doc({
 			"doctype": "GP Notification Log",

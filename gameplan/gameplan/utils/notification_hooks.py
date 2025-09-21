@@ -28,6 +28,7 @@ def send_task_notifications(doc, method):
 
 def send_artwork_task_notifications(doc, method):
 	"""Send notifications for GP Artwork Task events"""
+	print(f"[DEBUG] send_artwork_task_notifications called: method={method}, doc={doc.name}")
 	if method == "after_insert":
 		# New artwork task created
 		if doc.assigned_to:
@@ -57,6 +58,7 @@ def send_artwork_task_notifications(doc, method):
 	elif method == "on_update":
 		# Artwork task updated - check for status changes
 		old_doc = doc.get_doc_before_save()
+		print(f"[DEBUG] Artwork task on_update: {doc.name}, old_status: {old_doc.status if old_doc else 'None'}, new_status: {doc.status}")
 		if old_doc and old_doc.status != doc.status:
 			title = f"Artwork Task Status Changed: {doc.title}"
 			body = f"Artwork task '{doc.title}' status changed from '{old_doc.status}' to '{doc.status}' by {frappe.session.user}"
@@ -77,7 +79,9 @@ def send_artwork_task_notifications(doc, method):
 				recipient_user = doc.assigned_to
 			
 			# Only send notification if there's a valid recipient
+			print(f"[DEBUG] recipient_user: {recipient_user}, assigned_to: {doc.assigned_to}, session_user: {frappe.session.user}")
 			if recipient_user:
+				print(f"[DEBUG] Sending notification to {recipient_user}")
 				NotificationManager.send_notification(
 					title=title,
 					body=body,
@@ -87,6 +91,8 @@ def send_artwork_task_notifications(doc, method):
 					reference_name=doc.name,
 					data=data
 				)
+			else:
+				print(f"[DEBUG] No notification sent - no valid recipient")
 		
 		# Check for assignment changes
 		if old_doc and old_doc.assigned_to != doc.assigned_to and doc.assigned_to:
