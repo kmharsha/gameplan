@@ -4,7 +4,7 @@
  "autoname": "field:device_id",
  "creation": "2025-01-21 17:30:00.000000",
  "default_view": "List",
- "doctype": "GP Device Registration",
+ "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
