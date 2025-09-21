@@ -30,6 +30,17 @@
       </div>
     </div>
 
+    <!-- Notification Status -->
+    <div class="section">
+      <h2>Notification Status</h2>
+      <div class="status-info">
+        <p><strong>Browser Support:</strong> {{ 'Notification' in window ? '✅ Supported' : '❌ Not Supported' }}</p>
+        <p><strong>Permission Status:</strong> {{ Notification.permission || 'Unknown' }}</p>
+        <p><strong>HTTPS Required:</strong> {{ window.location.protocol === 'https:' ? '✅ Secure' : '❌ Not Secure (HTTPS required for notifications)' }}</p>
+        <p><strong>Current URL:</strong> {{ window.location.href }}</p>
+      </div>
+    </div>
+
     <!-- Test Notifications -->
     <div class="section">
       <h2>Test Notifications</h2>
@@ -39,6 +50,12 @@
         </button>
         <button @click="requestPermission" class="btn btn-secondary">
           Request Permission
+        </button>
+        <button @click="testBrowserNotification" class="btn btn-success">
+          Test Browser Popup
+        </button>
+        <button @click="forceTestNotification" class="btn btn-warning">
+          Force Test (No Permission Check)
         </button>
         <button @click="refreshNotifications" class="btn btn-secondary">
           Refresh
@@ -182,13 +199,39 @@ const sendTestNotification = async () => {
     console.log('Test notification sent successfully')
     
     // Test browser notification immediately
+    console.log('Checking notification permission:', Notification.permission)
     if (Notification.permission === 'granted') {
-      new Notification('Test Browser Notification', {
-        body: 'This is a test browser notification from Gameplan!',
-        icon: '/favicon.png'
-      })
+      console.log('Permission granted, showing browser notification...')
+      try {
+        const notification = new Notification('Test Browser Notification', {
+          body: 'This is a test browser notification from Gameplan!',
+          icon: '/favicon.png',
+          tag: 'test-notification-' + Date.now(),
+          requireInteraction: false
+        })
+        
+        console.log('Browser notification created:', notification)
+        
+        // Handle click
+        notification.onclick = () => {
+          console.log('Browser notification clicked')
+          window.focus()
+          notification.close()
+        }
+        
+        // Auto close after 5 seconds
+        setTimeout(() => {
+          notification.close()
+          console.log('Browser notification auto-closed')
+        }, 5000)
+        
+      } catch (error) {
+        console.error('Error creating browser notification:', error)
+        alert('Error creating browser notification: ' + error.message)
+      }
     } else {
-      console.log('Browser notification permission not granted')
+      console.log('Browser notification permission not granted:', Notification.permission)
+      alert('Browser notification permission not granted. Please click "Request Permission" first.')
     }
     
     // Wait a moment for the notification to be created
@@ -228,19 +271,141 @@ const sendNotification = async (type) => {
 }
 
 const requestPermission = async () => {
+  console.log('Requesting notification permission...')
+  console.log('Notification API available:', 'Notification' in window)
+  
   if ('Notification' in window) {
-    const permission = await Notification.requestPermission()
-    permissionStatus.value = permission === 'granted' ? 'Granted' : 'Denied'
-    
-    // Test browser notification if permission granted
-    if (permission === 'granted') {
-      new Notification('Test Browser Notification', {
-        body: 'This is a test browser notification!',
-        icon: '/favicon.png'
-      })
+    try {
+      const permission = await Notification.requestPermission()
+      console.log('Permission result:', permission)
+      permissionStatus.value = permission === 'granted' ? 'Granted' : 'Denied'
+      
+      // Test browser notification if permission granted
+      if (permission === 'granted') {
+        console.log('Permission granted, showing test notification...')
+        try {
+          const notification = new Notification('Test Browser Notification', {
+            body: 'This is a test browser notification!',
+            icon: '/favicon.png',
+            tag: 'test-notification',
+            requireInteraction: false
+          })
+          
+          console.log('Test notification created:', notification)
+          
+          // Handle click
+          notification.onclick = () => {
+            console.log('Test notification clicked')
+            window.focus()
+            notification.close()
+          }
+          
+          // Auto close after 5 seconds
+          setTimeout(() => {
+            notification.close()
+            console.log('Test notification auto-closed')
+          }, 5000)
+          
+        } catch (error) {
+          console.error('Error creating test notification:', error)
+          alert('Error creating test notification: ' + error.message)
+        }
+      } else {
+        console.log('Permission denied or dismissed')
+        alert('Notification permission was denied. Please enable notifications in your browser settings.')
+      }
+    } catch (error) {
+      console.error('Error requesting permission:', error)
+      alert('Error requesting notification permission: ' + error.message)
     }
   } else {
+    console.log('Notifications not supported in this browser')
     permissionStatus.value = 'Not Supported'
+    alert('Browser notifications are not supported in this browser.')
+  }
+}
+
+const testBrowserNotification = () => {
+  console.log('Testing browser notification directly...')
+  console.log('Notification API available:', 'Notification' in window)
+  console.log('Current permission:', Notification.permission)
+  
+  if (!('Notification' in window)) {
+    alert('Browser notifications are not supported in this browser.')
+    return
+  }
+  
+  if (Notification.permission === 'granted') {
+    console.log('Permission already granted, showing test notification...')
+    try {
+      const notification = new Notification('Direct Test Notification', {
+        body: 'This is a direct test of browser notifications!',
+        icon: '/favicon.png',
+        tag: 'direct-test-' + Date.now(),
+        requireInteraction: false
+      })
+      
+      console.log('Direct test notification created:', notification)
+      
+      // Handle click
+      notification.onclick = () => {
+        console.log('Direct test notification clicked')
+        window.focus()
+        notification.close()
+      }
+      
+      // Auto close after 5 seconds
+      setTimeout(() => {
+        notification.close()
+        console.log('Direct test notification auto-closed')
+      }, 5000)
+      
+    } catch (error) {
+      console.error('Error creating direct test notification:', error)
+      alert('Error creating direct test notification: ' + error.message)
+    }
+  } else if (Notification.permission === 'denied') {
+    alert('Notification permission is denied. Please enable notifications in your browser settings and refresh the page.')
+  } else {
+    alert('Notification permission not requested yet. Please click "Request Permission" first.')
+  }
+}
+
+const forceTestNotification = () => {
+  console.log('Force testing browser notification (ignoring permission)...')
+  
+  if (!('Notification' in window)) {
+    alert('Browser notifications are not supported in this browser.')
+    return
+  }
+  
+  try {
+    // Try to create notification regardless of permission status
+    const notification = new Notification('Force Test Notification', {
+      body: 'This is a force test notification that should work!',
+      icon: '/favicon.png',
+      tag: 'force-test-' + Date.now(),
+      requireInteraction: false
+    })
+    
+    console.log('Force test notification created:', notification)
+    
+    notification.onclick = () => {
+      console.log('Force test notification clicked')
+      window.focus()
+      notification.close()
+    }
+    
+    setTimeout(() => {
+      notification.close()
+      console.log('Force test notification auto-closed')
+    }, 5000)
+    
+    alert('Force test notification sent! Check your browser for the popup.')
+    
+  } catch (error) {
+    console.error('Force test notification failed:', error)
+    alert('Force test failed: ' + error.message + '\n\nThis usually means:\n1. Notifications are blocked by browser\n2. Site is not secure (HTTPS required)\n3. Browser doesn\'t support notifications')
   }
 }
 
@@ -262,6 +427,37 @@ onMounted(() => {
   } else {
     permissionStatus.value = 'Not Supported'
   }
+  
+  // Auto-test browser notifications on page load (for testing)
+  setTimeout(() => {
+    console.log('Auto-testing browser notifications...')
+    if (Notification.permission === 'granted') {
+      console.log('Permission already granted, showing auto-test notification')
+      try {
+        const notification = new Notification('Auto-Test Notification', {
+          body: 'This is an automatic test notification when the page loads!',
+          icon: '/favicon.png',
+          tag: 'auto-test',
+          requireInteraction: false
+        })
+        
+        notification.onclick = () => {
+          console.log('Auto-test notification clicked')
+          window.focus()
+          notification.close()
+        }
+        
+        setTimeout(() => {
+          notification.close()
+        }, 3000)
+        
+      } catch (error) {
+        console.error('Auto-test notification failed:', error)
+      }
+    } else {
+      console.log('Permission not granted, skipping auto-test')
+    }
+  }, 2000)
 })
 </script>
 
@@ -336,6 +532,19 @@ onMounted(() => {
   color: #333;
 }
 
+.status-info {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.status-info p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
 .buttons {
   display: flex;
   gap: 10px;
@@ -382,6 +591,24 @@ onMounted(() => {
 
 .btn-dark:hover {
   background: #23272b;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background: #e0a800;
 }
 
 .btn:disabled {
