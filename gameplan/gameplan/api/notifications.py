@@ -101,12 +101,9 @@ def send_notification(title, body, notification_type="Custom",
 	
 	return send_simple_notification(
 		title=title,
-		body=body,
+		message=body,
+		user=recipient_user,
 		notification_type=notification_type,
-		recipient_user=recipient_user,
-		recipient_role=recipient_role,
-		reference_doctype=reference_doctype,
-		reference_name=reference_name,
 		data=data
 	)
 
@@ -140,11 +137,9 @@ def send_system_notification(title, body, recipient_user=None, recipient_role=No
 @frappe.whitelist()
 def test_notification():
 	"""Test notification - sends a test notification to current user"""
-	from gameplan.gameplan.utils.simple_notifications import send_notification
-	
 	user = frappe.session.user
 	
-	notification = send_notification(
+	notification = send_simple_notification(
 		title="Test Notification",
 		message="This is a test notification from Gameplan!",
 		user=user,
@@ -188,11 +183,9 @@ def send_task_status_change_notification(task_id, task_title, from_status, to_st
 	
 	return send_simple_notification(
 		title=title,
-		body=body,
+		message=body,
+		user=recipient_user,
 		notification_type="Task Status Change",
-		recipient_user=recipient_user,
-		reference_doctype="GP Artwork Task",
-		reference_name=task_id,
 		data=data
 	)
 
@@ -226,11 +219,9 @@ def send_task_bucket_movement_notification(task_id, task_title, from_bucket, to_
 	
 	return send_simple_notification(
 		title=title,
-		body=body,
+		message=body,
+		user=recipient_user,
 		notification_type="Task Movement",
-		recipient_user=recipient_user,
-		reference_doctype="GP Artwork Task",
-		reference_name=task_id,
 		data=data
 	)
 
@@ -254,11 +245,9 @@ def send_task_assignment_notification(task_id, task_title, assigned_to, assigned
 	
 	return send_simple_notification(
 		title=title,
-		body=body,
+		message=body,
+		user=assigned_to,
 		notification_type="Task Assignment",
-		recipient_user=assigned_to,
-		reference_doctype="GP Artwork Task",
-		reference_name=task_id,
 		data=data
 	)
 
@@ -285,11 +274,9 @@ def send_task_created_notification(task_id, task_title, created_by, assigned_to=
 	
 	return send_simple_notification(
 		title=title,
-		body=body,
+		message=body,
+		user=recipient_user,
 		notification_type="Task Assignment",
-		recipient_user=recipient_user,
-		reference_doctype="GP Artwork Task",
-		reference_name=task_id,
 		data=data
 	)
 
@@ -313,11 +300,9 @@ def send_task_moved_to_sales_bucket_notification(task_id, task_title, moved_by,
 	# Send to sales team
 	return send_simple_notification(
 		title=title,
-		body=body,
+		message=body,
+		user=None,  # Will be handled by role-based distribution
 		notification_type="Task Movement",
-		recipient_role="Sales User",
-		reference_doctype="GP Artwork Task",
-		reference_name=task_id,
 		data=data
 	)
 
@@ -342,10 +327,8 @@ def send_task_moved_from_procurement_bucket_notification(task_id, task_title, ne
 	# Send to procurement team
 	return send_simple_notification(
 		title=title,
-		body=body,
+		message=body,
+		user=None,  # Will be handled by role-based distribution
 		notification_type="Task Movement",
-		recipient_role="Procurement User",
-		reference_doctype="GP Artwork Task",
-		reference_name=task_id,
 		data=data
 	)
