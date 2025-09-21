@@ -211,32 +211,32 @@ export interface GPInvitation extends DocType {
   role: '' | 'Gameplan Admin' | 'Gameplan Member' | 'Gameplan Guest'
 }
 
-// Last updated: 2024-12-15 00:46:16.394764
+// Last updated: 2025-09-21 13:58:15.268215
 export interface GPProject extends DocType {
   /** Title: Data */
-  title: string
+  title: string;
   /** Description: Text Editor */
-  description?: string
+  description?: string;
   /** Team: Link (GP Team) */
-  team?: string
+  team?: string;
   /** Members: Table (GP Member) */
-  members: GPMember[]
+  members: GPMember[];
   /** Icon: Data */
-  icon?: string
+  icon?: string;
   /** Readme: Text Editor */
-  readme?: string
+  readme?: string;
   /** Tasks Count: Int */
-  tasks_count?: number
+  tasks_count?: number;
   /** Discussions Count: Int */
-  discussions_count?: number
+  discussions_count?: number;
   /** Archived At: Datetime */
-  archived_at?: string
+  archived_at?: string;
   /** Archived By: Link (User) */
-  archived_by?: string
+  archived_by?: string;
   /** Is Private: Check */
-  is_private: 0 | 1
+  is_private: 0 | 1;
   /** Is Followed: Check */
-  is_followed: 0 | 1
+  is_followed: 0 | 1;
 }
 
 // Last updated: 2022-08-11 18:36:55.799372

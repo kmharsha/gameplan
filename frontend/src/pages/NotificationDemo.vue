@@ -104,7 +104,7 @@ const loadNotifications = async () => {
   try {
     loading.value = true
     const response = await frappeRequest({
-      method: 'gameplan.gameplan.api.notifications.get_user_notifications',
+      url: '/api/method/gameplan.gameplan.api.notifications.get_user_notifications',
       params: {
         limit: 50
       }
@@ -125,7 +125,7 @@ const sendTestNotification = async () => {
   try {
     loading.value = true
     await frappeRequest({
-      method: 'gameplan.gameplan.api.notifications.send_system_notification',
+      url: '/api/method/gameplan.gameplan.api.notifications.send_system_notification',
       params: {
         title: 'Test Notification',
         body: 'This is a test notification from Gameplan!',
@@ -146,7 +146,7 @@ const sendNotification = async (type) => {
   try {
     loading.value = true
     await frappeRequest({
-      method: 'gameplan.gameplan.api.notifications.send_system_notification',
+      url: '/api/method/gameplan.gameplan.api.notifications.send_system_notification',
       params: {
         title: type,
         body: `This is a ${type} notification`,
