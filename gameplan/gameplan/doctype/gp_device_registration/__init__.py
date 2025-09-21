@@ -1,0 +1,1 @@
+# GP Device Registration Doctype
